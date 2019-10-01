@@ -48,3 +48,31 @@ def retry(timeout=30, delay=5, retry_fail_exceptions=()):
 
         return wrapper
     return decorator
+
+
+@retry(timeout=10, delay=1, retry_fail_exceptions=(TypeError,))
+def my_fn():
+    rint = randint(1, 3)
+    if rint == 1:
+        print('RAISING VALUE ERROR, retry...')
+        raise ValueError('spagon value error')
+    elif rint == 2:
+        print('RAISING TYPE ERROR, SHOULD FAIL RETRY')
+        raise TypeError('spagon type error!')
+    print('we did okay!')
+    return 'Spagon'
+
+
+def main():
+    res = my_fn()
+    print('result:', res)
+
+# Example output:
+"""
+mspagon:~$ python3 retry.py
+RAISING VALUE ERROR, retry...
+try #1 of <function my_fn at 0x7ffff66987b8>(args=(), kwargs={}) failed: <class 'ValueError'>: spagon value error
+we did okay!
+completed <function my_fn at 0x7ffff66987b8> after 2 attempts in 1 seconds
+result: Spagon
+"""
